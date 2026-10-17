@@ -1,8 +1,8 @@
 # Muse Multi Studio — Ứng dụng tạo ảnh/video AI đa luồng (local)
 
-<!-- Ảnh giao diện tham khảo nằm trong bản ZIP v0.2.0 được cung cấp kèm cuộc trò chuyện. -->
+![Giao diện Dark Pro](docs/giao-dien.png)
 
-> **Bản mã nguồn MVP 0.2.0**, lấy cảm hứng từ ảnh chụp màn hình giao diện. Không phải mã nguồn của nhà phát triển Muse Studio; không sử dụng đăng nhập trái phép, không giả lập kết quả AI.
+> **Bản mã nguồn MVP 0.2.1**, lấy cảm hứng từ ảnh chụp màn hình giao diện. Không phải mã nguồn của nhà phát triển Muse Studio; không sử dụng đăng nhập trái phép, không giả lập kết quả AI.
 
 ## Chức năng thực đã lập trình
 
@@ -22,7 +22,7 @@
 
 1. Cài Python 3.11+ (đánh dấu **Add Python to PATH**).
 2. Giải nén repository, nhấp đúp `start_windows.bat` — công cụ tự tạo `.venv` và cài dependencies.
-3. Ứng dụng mở cửa sổ desktop Windows bằng WebView2 (không phải trang web bên ngoài). Nếu thiếu `pywebview`, công cụ dự phòng mở `http://127.0.0.1:8765` trong trình duyệt. Không cần internet để dùng giao diện / quản lý queue; kết nối API cần internet.
+3. Ứng dụng mở cửa sổ desktop Windows bằng Microsoft Edge App mode (cửa sổ độc lập, không có thanh địa chỉ, không cần pythonnet/.NET). Nếu thiếu Edge/Chrome, công cụ dự phòng mở `http://127.0.0.1:8765` trong trình duyệt. Không cần internet để dùng giao diện / quản lý queue; kết nối API cần internet.
 4. Chọn **Tài khoản** → thêm API key `fal` hoặc `openai` (key được lưu **trên máy**, không nhập vào GitHub).
 5. Quay lại **Studio** → nhập prompt từng dòng → chọn Ảnh / Video / Ảnh→Video, tỷ lệ, tài khoản → **Tạo & chạy**.
 6. Kết quả nằm tại `%LOCALAPPDATA%\MuseMultiStudio\output`, SQLite và mã khóa ở `%LOCALAPPDATA%\MuseMultiStudio`. **Không xóa thư mục này** khi nâng cấp.
@@ -97,9 +97,9 @@ python -m pytest tests/ -q
 
 Tạo repository riêng `muse-multi-studio` trên GitHub (nên chọn **Private**). Đẩy toàn bộ tệp mã nguồn nhưng không đẩy dữ liệu người dùng. Workflow `.github/workflows/check.yml` tự chạy khi push. Nếu dùng công cụ kết nối GitHub trong ChatGPT, gửi URL repository trống để trợ lý upload lần đầu.
 
-## v0.2.0 — Kiểm thử và phát hành
+## v0.2.1 — Kiểm thử và phát hành
 
-Bản mã nguồn này được kiểm thử tự động trên Linux. Muốn có **EXE Windows thật**: tạo repo GitHub riêng, push mã nguồn; vào **Actions → Test and build Muse Multi Studio Windows → Run workflow**; sau khi job Windows xanh, tải artifact `MuseMultiStudio-Windows-v0.2.0`, giải nén ZIP và chạy `MuseMultiStudio.exe`. Trên Windows tự build bằng `build_windows.bat`.
+Bản mã nguồn này được kiểm thử tự động trên Linux. Muốn có **EXE Windows thật**: tạo repo GitHub riêng, push mã nguồn; vào **Actions → Test and build Muse Multi Studio Windows → Run workflow**; sau khi job Windows xanh, tải artifact `MuseMultiStudio-Windows-v0.2.1`, giải nén ZIP và chạy `MuseMultiStudio.exe`. Trên Windows tự build bằng `build_windows.bat`.
 
 CI dùng runner Windows để đóng gói PyInstaller, chạy chính EXE bằng `--server-only`, gọi `/api/health`, sau đó tạo ZIP. **Smoke test này không chứng nhận giao diện WebView2**, chỉ xác nhận EXE chứa backend có thể khởi động. Trước khi chạy bản mới, sao lưu toàn bộ `%LOCALAPPDATA%\MuseMultiStudio`, đặc biệt `muse.db` và `credential.key`. Không tải API key hay SQLite lên GitHub.
 

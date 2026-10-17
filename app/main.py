@@ -62,7 +62,7 @@ def create_app(data_dir=None,provider_func=None,download_func=None):
         engine.start()
         yield
         engine.shutdown()
-    app=FastAPI(title='Muse Multi Studio',version='0.2.0',lifespan=lifespan)
+    app=FastAPI(title='Muse Multi Studio',version='0.2.1',lifespan=lifespan)
     app.state.store=store
     app.state.engine=engine
 
@@ -85,7 +85,7 @@ def create_app(data_dir=None,provider_func=None,download_func=None):
 
     @app.get('/api/health')
     def health():
-        return {'status':'ok','version':'0.2.0','data_dir':str(store.root)}
+        return {'status':'ok','version':'0.2.1','data_dir':str(store.root)}
 
     @app.get('/api/state')
     def state():

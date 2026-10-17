@@ -244,3 +244,32 @@ def test_restart_does_not_double_bill_untracked_running_job(tmp_path):
         jobs=c.app.state.store.query('SELECT id,state,remote_stage,remote_id FROM jobs ORDER BY id')
         assert jobs[0]['state']=='failed' and jobs[0]['remote_stage']=='ambiguous'
         assert jobs[1]['state']=='queued' and jobs[1]['remote_id']=='fal-remote-123'
+
+
+def test_windows_browser_launcher_does_not_depend_on_pythonnet(monkeypatch, tmp_path):
+    from unittest.mock import Mock
+    import run
+    monkeypatch.setenv('MUSE_BROWSER_EXECUTABLE', str(tmp_path / 'msedge.exe'))
+    (tmp_path / 'msedge.exe').write_bytes(b'fake')
+    assert run.browser_executable() == str(tmp_path / 'msedge.exe')
+    process = Mock()
+    monkeypatch.setattr(run.subprocess, 'Popen', lambda argv: (setattr(process, 'argv', argv), process)[1])
+    run.open_app_window(run.browser_executable(), 'http://127.0.0.1:8765', tmp_path / 'dữ liệu')
+    assert process.wait.called
+    args = process.argv
+    assert any(x.startswith('--app=http://127.0.0.1:8765') for x in args)
+    assert any('--user-data-dir=' in x and 'dữ liệu' in x for x in args)
+    assert 'webview' not in run.__dict__
+
+
+def test_windows_ui_smoke_rejects_non_png_and_no_edge(monkeypatch, tmp_path):
+    import run
+    import pytest
+    with pytest.raises(RuntimeError, match='Edge/Chrome'):
+        run.run_ui_smoke(None, 'http://127.0.0.1:8765', tmp_path)
+    class Result:
+        returncode = 0
+        stderr = b''
+    monkeypatch.setattr(run.subprocess, 'run', lambda argv, **kw: Result())
+    with pytest.raises(RuntimeError, match='render'):
+        run.run_ui_smoke('msedge.exe', 'http://127.0.0.1:8765', tmp_path)
