@@ -30,7 +30,7 @@ jobs:
       - name: Install dependencies
         run: python -m pip install -r requirements-windows.txt pytest pyinstaller
       - name: Build real Windows PE executable
-        run: python -m PyInstaller --noconfirm --clean --onedir --windowed --name MuseMultiStudio --collect-all webview --collect-all uvicorn --add-data "app/static;app/static" run.py
+        run: python -m PyInstaller --noconfirm --clean --onedir --windowed --name MuseMultiStudio --collect-all webview --collect-all uvicorn --add-data "app/static;app/static" launch.py
       - name: Validate built EXE with real HTTP backend smoke test
         shell: pwsh
         run: ./scripts/smoke_windows.ps1 -ExePath "dist/MuseMultiStudio/MuseMultiStudio.exe"

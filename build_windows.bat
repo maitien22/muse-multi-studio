@@ -3,7 +3,7 @@ setlocal
 cd /d "%~dp0"
 call start_build_requirements.bat
 if errorlevel 1 exit /b 1
-".venv\Scripts\python.exe" -m PyInstaller --noconfirm --clean --onedir --windowed --name MuseMultiStudio --collect-all webview --collect-all uvicorn --add-data "app\static;app\static" run.py
+".venv\Scripts\python.exe" -m PyInstaller --noconfirm --clean --onedir --windowed --name MuseMultiStudio --collect-all webview --collect-all uvicorn --add-data "app\static;app\static" launch.py
 if errorlevel 1 (
   echo LOI: Build EXE khong thanh cong.
   pause
