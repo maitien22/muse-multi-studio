@@ -1,0 +1,52 @@
+name: Test and build Muse Multi Studio Windows
+on:
+  push:
+    branches: ['**']
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements.txt pytest
+      - run: python -m pytest tests/ -q
+      - run: python -m compileall -q app run.py
+      - run: node --check app/static/app.js
+  windows:
+    needs: test
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: python -m pip install -r requirements-windows.txt pytest pyinstaller
+      - name: Build real Windows PE executable
+        run: python -m PyInstaller --noconfirm --clean --onedir --windowed --name MuseMultiStudio --collect-all webview --collect-all uvicorn --add-data "app/static;app/static" run.py
+      - name: Validate built EXE with real HTTP backend smoke test
+        shell: pwsh
+        run: ./scripts/smoke_windows.ps1 -ExePath "dist/MuseMultiStudio/MuseMultiStudio.exe"
+      - name: Package portable Windows distribution
+        shell: pwsh
+        run: Compress-Archive -Path dist/MuseMultiStudio -DestinationPath dist/MuseMultiStudio-Windows-v0.2.0.zip -Force
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MuseMultiStudio-Windows-v0.2.0
+          path: dist/MuseMultiStudio-Windows-v0.2.0.zip
+          if-no-files-found: error
+      - name: Publish tagged beta release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          prerelease: true
+          files: dist/MuseMultiStudio-Windows-v0.2.0.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,17 @@
+__pycache__/
+.pytest_cache/
+*.pyc
+*.pyo
+.env
+venv/
+.venv/
+build/
+dist/
+*.spec
+*.db
+*.db-wal
+*.db-shm
+credential.key
+output/
+references/
+.DS_Store
