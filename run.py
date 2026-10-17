@@ -26,11 +26,11 @@ def await_server(seconds=15):
 
 def main():
     if '--server-only' in sys.argv:
-        uvicorn.run(app,host=HOST,port=PORT,log_level='warning')
+        uvicorn.run(app,host=HOST,port=PORT,log_level='warning',log_config=None)
         return
     if sys.platform=='win32':
         # Run API server on a thread; native WebView2 remains on the GUI thread.
-        server=uvicorn.Server(uvicorn.Config(app,host=HOST,port=PORT,log_level='warning'))
+        server=uvicorn.Server(uvicorn.Config(app,host=HOST,port=PORT,log_level='warning',log_config=None))
         thread=threading.Thread(target=server.run,name='muse-backend',daemon=True)
         thread.start()
         if not await_server():
@@ -49,7 +49,7 @@ def main():
             thread.join(timeout=5)
     else:
         threading.Thread(target=lambda:(await_server() and webbrowser.open(URL)),daemon=True).start()
-        uvicorn.run(app,host=HOST,port=PORT,log_level='warning')
+        uvicorn.run(app,host=HOST,port=PORT,log_level='warning',log_config=None)
 
 
 if __name__=='__main__':
